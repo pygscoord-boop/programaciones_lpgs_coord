@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Programación Global · LPGS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<style>
+:root{
+  --tinta:#1a1a1a;
+  --papel:#f4f5f7;
+  --papel-card:#ffffff;
+  --linea:#d9dce1;
+  --gris:#666c76;
+  --ok:#2f6b4f;
+  --error:#a3342b;
+  --amarillo:#ffff00;
+  --radio:6px;
+}
+/* -------- Tema Licenciatura: azul / negro / blanco -------- */
+body.diseno-licenciatura{
+  --tema:#002060;
+  --tema-suave:#dbe6f5;
+  --tema-banda:#2f5597;
+  --tema-banda-texto:#ffffff;
+  --tema-borde-tabla:#ffffff;
+}
+/* -------- Tema División: blanco y negro -------- */
+body.diseno-division{
+  --tema:#000000;
+  --tema-suave:#eeeeee;
+  --tema-banda:#ffffff;
+  --tema-banda-texto:#000000;
+  --tema-borde-tabla:#000000;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--papel);
+  color:var(--tinta);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;
+  line-height:1.45;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+h1,h2,h3{font-family:'Lora',serif; margin:0; color:var(--tema);}
+
+/* ---------- Layout general ---------- */
+#app{max-width:1220px; margin:0 auto; padding:0 20px 120px;}
+
+/* ---------- Encabezado institucional (dinámico) ---------- */
+.letterhead{
+  background:#fff;
+  margin:0 -20px 24px;
+  padding:18px 20px;
+  border-bottom:5px solid var(--tema);
+}
+.lh-grid{display:flex; align-items:center; gap:18px;}
+.lh-logo-slot{
+  width:64px; height:64px; flex:none; border:1.5px dashed var(--linea); border-radius:4px;
+  display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--gris);
+  text-align:center; line-height:1.1;
+}
+.lh-inst{font-size:11.5px; font-weight:700; color:var(--tinta); line-height:1.5; flex:1;}
+.lh-titulo-bloque{flex:2; text-align:center;}
+.lh-titulo-bloque h1{font-size:19px; color:var(--tema); line-height:1.25;}
+.lh-titulo-bloque .lh-sub{font-size:15px; font-weight:700; color:var(--tema); margin-top:2px; font-family:'Lora',serif;}
+.lh-contacto{font-size:10.5px; color:var(--tema); text-align:right; line-height:1.6; flex:1;}
+.lh-actualizado{
+  background:var(--amarillo); border:1px solid var(--tinta); font-size:11px; font-weight:700;
+  padding:5px 10px; white-space:nowrap; display:inline-block;
+}
+.lh-division-top{display:flex; align-items:center; gap:18px;}
+.lh-division-titulo{flex:1; text-align:center; font-size:16px; color:var(--tema); line-height:1.3;}
+.lh-logo-spacer{width:64px; flex:none;}
+.lh-division-actualizado-wrap{display:flex; justify-content:center; margin-top:10px;}
+
+.panel{
+  background:var(--papel-card);
+  border:1px solid var(--linea);
+  border-radius:var(--radio);
+  padding:18px 20px;
+  margin-bottom:18px;
+}
+.panel h2{font-size:15px; margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--linea);}
+.panel h2 small{font-family:'Inter'; color:var(--gris); font-weight:400; font-size:12px;}
+
+.grid{display:grid; gap:12px;}
+.grid-2{grid-template-columns:1fr 1fr;}
+.grid-3{grid-template-columns:1fr 1fr 1fr;}
+@media (max-width:760px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+label{display:block; font-size:12px; font-weight:600; color:var(--gris); margin-bottom:4px; text-transform:uppercase; letter-spacing:.03em;}
+input[type=text],input[type=number],input[type=time],select{
+  width:100%; padding:7px 9px; border:1px solid var(--linea); border-radius:4px;
+  font-family:inherit; font-size:13.5px; background:#fff; color:var(--tinta);
+}
+input:focus,select:focus{outline:2px solid var(--tema); outline-offset:1px; border-color:var(--tema);}
+.field{margin-bottom:10px;}
+
+.toggle-diseno{display:flex; gap:0; border:1px solid var(--tema); border-radius:4px; overflow:hidden; width:fit-content;}
+.toggle-diseno button{
+  border:none; background:#fff; color:var(--tema); padding:8px 16px; cursor:pointer;
+  font-weight:600; font-size:13px; font-family:inherit;
+}
+.toggle-diseno button.activo{background:var(--tema); color:#fff;}
+
+/* ---------- Trimestres / steppers ---------- */
+.tabla-trims{width:100%; border-collapse:collapse;}
+.tabla-trims th{
+  text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+  color:var(--gris); border-bottom:2px solid var(--linea); padding:6px 8px;
+}
+.tabla-trims td{padding:7px 8px; border-bottom:1px solid var(--linea); font-size:13px;}
+.stepper{display:flex; align-items:center; gap:6px;}
+.stepper button{
+  width:26px; height:26px; border:1px solid var(--linea); background:#fff; border-radius:4px;
+  cursor:pointer; font-size:15px; line-height:1; color:var(--tema); font-weight:700;
+}
+.stepper button:hover{background:var(--tema-suave);}
+.stepper .num{width:28px; text-align:center; font-weight:700;}
+.badge{
+  display:inline-block; background:var(--tema-suave); color:var(--tema);
+  border-radius:3px; padding:1px 7px; font-size:11px; font-weight:700; font-family:'JetBrains Mono';
+}
+
+/* ---------- Grupos ---------- */
+.grupo-card{
+  border:1px solid var(--linea); border-left:4px solid var(--tema); border-radius:var(--radio);
+  padding:14px 16px; margin-bottom:14px; background:#fffffe;
+}
+.grupo-card .grupo-head{
+  display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px;
+  margin-bottom:10px;
+}
+.grupo-head .titulo{font-weight:700; color:var(--tema); font-family:'JetBrains Mono'; font-size:14px;}
+.grupo-head .meta{font-size:12px; color:var(--gris); font-family:'Inter';}
+.cupo-inline{display:flex; align-items:center; gap:6px;}
+.cupo-inline input{width:64px;}
+
+.componente{
+  background:#fff; border:1px solid var(--linea); border-radius:5px; padding:12px; margin-bottom:10px;
+}
+.componente .fila-top{display:grid; grid-template-columns:160px 1fr 1fr 160px 32px; gap:10px; align-items:end; margin-bottom:10px;}
+@media (max-width:900px){.componente .fila-top{grid-template-columns:1fr;}}
+.docente-resultado{font-size:12px; margin-top:3px; min-height:14px;}
+.docente-resultado.ok{color:var(--ok);}
+.docente-resultado.error{color:var(--error);}
+.comp-otro{margin-top:6px;}
+
+.dias-tabla{width:100%; border-collapse:collapse; margin-top:4px;}
+.dias-tabla th{font-size:10.5px; text-transform:uppercase; color:var(--gris); text-align:left; padding:4px 6px; border-bottom:1px solid var(--linea);}
+.dias-tabla td{padding:4px 6px; vertical-align:middle;}
+.dias-tabla select{font-size:12.5px; padding:5px 6px;}
+.hora-personalizada{display:flex; gap:4px;}
+.hora-personalizada input{padding:5px;}
+.fila-aula{display:flex; align-items:center; gap:6px;}
+.fila-aula input[type=text]{flex:1;}
+.fila-aula label.chk{
+  display:flex; align-items:center; gap:3px; font-size:10px; text-transform:none; color:var(--gris);
+  white-space:nowrap; margin:0; font-weight:500;
+}
+.fila-aula input[type=checkbox]{width:auto;}
+
+.btn-quitar{
+  background:none; border:none; color:var(--error); cursor:pointer; font-size:18px; line-height:1;
+  padding:4px; align-self:center;
+}
+.check-coord{display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--tema); white-space:nowrap;}
+.check-coord input{width:auto;}
+
+.btn{
+  font-family:inherit; font-weight:600; font-size:13px; padding:8px 16px; border-radius:4px;
+  border:1px solid var(--tema); background:#fff; color:var(--tema); cursor:pointer;
+}
+.btn:hover{background:var(--tema-suave);}
+.btn-primario{background:var(--tema); color:#fff;}
+.btn-primario:hover{opacity:.85;}
+.btn-fantasma{border:1px dashed var(--linea); color:var(--gris); background:none; width:100%; padding:9px;}
+.btn-fantasma:hover{border-color:var(--tema); color:var(--tema);}
+
+/* ---------- Barra de acciones ---------- */
+.barra-acciones{
+  position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--linea);
+  padding:12px 20px; display:flex; gap:10px; justify-content:flex-end; align-items:center;
+  box-shadow:0 -4px 14px rgba(0,0,0,.06); z-index:50; flex-wrap:wrap;
+}
+.estado-guardado{font-size:12px; color:var(--gris); margin-right:auto;}
+
+/* ---------- Vista previa / impresión ---------- */
+#vista-previa{display:none;}
+#vista-previa .letterhead{margin:0 0 14px;}
+.tabla-final{width:100%; border-collapse:collapse; font-size:10.5px;}
+.tabla-final th{
+  background:var(--tema-banda); color:var(--tema-banda-texto); padding:5px 4px; font-size:9.5px;
+  letter-spacing:.02em; border:1px solid var(--tema-borde-tabla); text-align:center;
+}
+.tabla-final th.th-horario{font-size:10px; font-weight:700; letter-spacing:.06em;}
+.tabla-final td{border:1px solid var(--linea); padding:4px 5px; text-align:center; vertical-align:middle; color:#000;}
+.tabla-final td.izq{text-align:left;}
+.tabla-final td.coord-marca{font-weight:700;}
+.tabla-final td.aula-valor{font-weight:700;}
+.tabla-final td.resaltado{background:var(--amarillo);}
+.firmas{display:flex; justify-content:space-around; margin-top:46px;}
+.firma{text-align:center; width:280px;}
+.firma .linea{border-top:1px solid var(--tinta); margin-bottom:6px;}
+.firma .cargo{font-size:11px; color:var(--gris); margin-top:2px;}
+
+@media print{
+  body *{visibility:hidden;}
+  #vista-previa, #vista-previa *{visibility:visible;}
+  #vista-previa{display:block !important; position:absolute; top:0; left:0; width:100%;}
+  .barra-acciones, #app > .letterhead, .panel, #contenedor-grupos{display:none !important;}
+  @page{size:letter landscape; margin:8mm;}
+  .tabla-final thead{display:table-header-group;}
+  .tabla-final tbody.bloque-grupo{break-inside:avoid; page-break-inside:avoid;}
+}
+.solo-division,.solo-division-th{display:none;}
+body.diseno-division .solo-division{display:table-cell;}
+body.diseno-division .solo-division-th{display:table-cell;}
+</style>
+</head>
+<body class="diseno-licenciatura">
+<div id="app">
+
+  <div class="letterhead" id="letterhead"></div>
+
+  <!-- ============ DATOS GENERALES ============ -->
+  <div class="panel">
+    <h2>Datos generales</h2>
+    <div class="grid grid-3">
+      <div class="field">
+        <label>Periodo trimestral</label>
+        <input type="text" id="in-periodo" placeholder="Ej. 25-I (Invierno) / 25-P (Primavera) / 25-O (Otoño)" oninput="onCambiarPeriodo(this.value)">
+      </div>
+      <div class="field">
+        <label>Coordinador(a) de la Licenciatura</label>
+        <input type="text" id="in-coord-lic" placeholder="Nombre completo">
+      </div>
+      <div class="field">
+        <label>Jefe(a) del Depto. de Política y Cultura</label>
+        <input type="text" id="in-jefe-depto" placeholder="Nombre completo">
+      </div>
+    </div>
+    <div class="field" style="margin-top:6px;">
+      <label>Diseño del documento</label>
+      <div class="toggle-diseno">
+        <button id="btn-diseno-lic" class="activo" onclick="cambiarDiseno('licenciatura')">Licenciatura</button>
+        <button id="btn-diseno-div" onclick="cambiarDiseno('division')">División</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TRIMESTRES / GRUPOS ============ -->
+  <div class="panel">
+    <h2>Grupos por trimestre <small>— al definir cuántos grupos hay, se precargan automáticamente los componentes del módulo de ese trimestre</small></h2>
+    <table class="tabla-trims">
+      <thead>
+        <tr><th>Trimestre</th><th>UEA</th><th>Créd.</th><th>Clave UEA</th><th># Grupos</th></tr>
+      </thead>
+      <tbody id="cuerpo-trims"></tbody>
+    </table>
+  </div>
+
+  <!-- ============ GRUPOS GENERADOS ============ -->
+  <div id="contenedor-grupos"></div>
+
+  <!-- ============ VISTA PREVIA (también es lo que se imprime a PDF) ============ -->
+  <div id="vista-previa">
+    <div class="letterhead" id="letterhead-pv"></div>
+    <table class="tabla-final" id="pv-tabla">
+      <thead>
+        <tr>
+          <th rowspan="3">Trim Acad</th><th rowspan="3">Cred</th><th rowspan="3">Cve. U.E.A</th><th rowspan="3">Nombre de la U.E.A</th>
+          <th rowspan="3">Clave de Grupo</th><th rowspan="3">Núm. Eco.</th><th rowspan="3">Nombre del docente</th>
+          <th rowspan="3">Comp. Del Módulo</th><th rowspan="3">Cupo</th>
+          <th colspan="15" class="th-horario">HORARIO</th>
+          <th rowspan="3" class="solo-division-th">Observaciones</th>
+        </tr>
+        <tr>
+          <th colspan="3">Lunes</th><th colspan="3">Martes</th><th colspan="3">Miércoles</th>
+          <th colspan="3">Jueves</th><th colspan="3">Viernes</th>
+        </tr>
+        <tr>
+          <th>inicio</th><th>fin</th><th>aula</th>
+          <th>inicio</th><th>fin</th><th>aula</th>
+          <th>inicio</th><th>fin</th><th>aula</th>
+          <th>inicio</th><th>fin</th><th>aula</th>
+          <th>inicio</th><th>fin</th><th>aula</th>
+        </tr>
+      </thead>
+    </table>
+    <div style="font-size:11px; margin-top:6px;">*** Coordinador(a) de Módulo</div>
+    <div class="firmas">
+      <div class="firma">
+        <div class="linea">&nbsp;</div>
+        <div id="pv-firma-coord"></div>
+        <div class="cargo">Coordinador(a) de la Licenciatura en Política y Gestión Social</div>
+      </div>
+      <div class="firma">
+        <div class="linea">&nbsp;</div>
+        <div id="pv-firma-jefe"></div>
+        <div class="cargo">Jefe(a) del Departamento de Política y Cultura</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<datalist id="lista-profesores"></datalist>
+<datalist id="lista-profesores-nombre"></datalist>
+
+<!-- ============ BARRA DE ACCIONES ============ -->
+<div class="barra-acciones">
+  <span class="estado-guardado" id="estado-guardado"></span>
+  <select id="sel-cargar" style="width:240px;" onchange="cargarSeleccionada()">
+    <option value="">— Cargar programación guardada —</option>
+  </select>
+  <button class="btn" onclick="refrescarListado()">Actualizar lista</button>
+  <button class="btn" onclick="actualizarVistaPrevia()">Vista previa</button>
+  <button class="btn btn-primario" onclick="guardar()">Guardar</button>
+  <button class="btn btn-primario" onclick="generarExcel()">Generar Excel</button>
+  <button class="btn btn-primario" onclick="generarPDF()">Generar PDF</button>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN — pega aquí la URL de tu Apps Script desplegado
+   ============================================================ */
+const API_URL = "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT";
+
+/* Catálogo fijo de trimestres LPGS (estructura curricular, cambia poco) */
+const TRIMESTRES_LPGS = [
+  {trim:4,  label:"4º",  creditos:40, claveUEA:"3260001", nombreUEA:"Estructura Social",                         prefijo:"SD"},
+  {trim:5,  label:"5º",  creditos:40, claveUEA:"3260002", nombreUEA:"Estado y Sociedad",                         prefijo:"SE"},
+  {trim:6,  label:"6º",  creditos:40, claveUEA:"3260003", nombreUEA:"Sistema Político",                         prefijo:"SF"},
+  {trim:7,  label:"7º",  creditos:40, claveUEA:"3260004", nombreUEA:"Gobierno e Instituciones",                  prefijo:"SG"},
+  {trim:8,  label:"8º",  creditos:40, claveUEA:"3260005", nombreUEA:"Estructura y Procesos de la Organización",  prefijo:"SH"},
+  {trim:9,  label:"9º",  creditos:40, claveUEA:"3260013", nombreUEA:"Administración y Gestión Pública",          prefijo:"SI"},
+  {trim:10, label:"10º", creditos:40, claveUEA:"3260014", nombreUEA:"Políticas Públicas",                        prefijo:"SJ"},
+  {trim:11, label:"11º", creditos:30, claveUEA:"3260008", nombreUEA:"Gestión Gubernamental en México I",         prefijo:"SK"},
+  {trim:12, label:"12º", creditos:30, claveUEA:"3260009", nombreUEA:"Gestión Gubernamental en México II",        prefijo:"SL"},
+];
+
+/* Catálogo de componentes del módulo por trimestre (provisto por Víctor) */
+const COMPONENTES_POR_TRIMESTRE = {
+  4:  ["TEORÍA-INV", "METODOLOGÍA", "ESTADÍSTICA Y PROBABILIDAD"],
+  5:  ["TEORÍA-INV", "ANÁLISIS DEL DISCURSO", "ENCUESTA", "ESTADÍSTICA INFERENCIAL"],
+  6:  ["TEORÍA-INV", "DERECHO CONSTITUCIONAL", "ÁLGEBRA LINEAL"],
+  7:  ["TEORÍA-INV", "CÁLCULO DIFERENCIAL", "DERECHO ADMINISTRATIVO"],
+  8:  ["TEORÍA-INV", "MICROECONOMÍA", "PROGRAMACIÓN LINEAL"],
+  9:  ["TEORÍA-INV", "MACROECONOMÍA", "DECISIONES Y JUEGOS"],
+  10: ["TEORÍA-INV", "ECONOMÍA DEL SECTOR PÚBLICO", "PLANEACIÓN Y EVALUACIÓN DE PROYECTOS"],
+  11: ["SISTEMA POLÍTICO MEXICANO", "POLÍTICA SOCIAL", "SEMINARIO DE INVESTIGACIÓN"],
+  12: ["ADMINISTRACIÓN PÚBLICA MEXICANA", "POLÍTICAS COMPARADAS", "SEMINARIO DE INVESTIGACIÓN"],
+};
+const OTRO = "__otro__";
+
+const DIAS = [
+  {key:"L", nombre:"Lunes"},
+  {key:"M", nombre:"Martes"},
+  {key:"X", nombre:"Miércoles"},
+  {key:"J", nombre:"Jueves"},
+  {key:"V", nombre:"Viernes"},
+];
+
+function horarioVacio(){
+  const h = {};
+  DIAS.forEach(d => h[d.key] = {tipo:"sin_clase", inicio:"", fin:"", aula:"", resaltado:false});
+  return h;
+}
+
+/* ---------------- ESTADO ---------------- */
+let state = {
+  periodo: "",
+  coordLic: "",
+  jefeDepto: "",
+  diseno: "licenciatura",
+  trimestres: {} // {4: {grupos:[...]}, ...}
+};
+TRIMESTRES_LPGS.forEach(t => state.trimestres[t.trim] = {grupos:[]});
+
+let idActual = null; // id de la programación si ya fue guardada/cargada
+let catalogoProfesores = []; // [{num, nombre}] — cache local para autocompletar
+
+/* ---------------- UTILIDADES ---------------- */
+function pad2(n){ return String(n).padStart(2,"0"); }
+function uid(){ return "c" + Math.random().toString(36).slice(2,9); }
+
+function nuevoComponente(compModuloInicial){
+  return { id: uid(), numEcon:"", nombreDocente:"", estadoBusqueda:"", compModulo: compModuloInicial || "", esCoordinador:false, horario: horarioVacio() };
+}
+
+function regenerarClavesGrupo(trim){
+  const info = TRIMESTRES_LPGS.find(t => t.trim === trim);
+  state.trimestres[trim].grupos.forEach((g, idx) => {
+    g.claveGrupo = info.prefijo + pad2(idx+1) + "G";
+  });
+}
+
+/* ---------------- RENDER: TABLA DE TRIMESTRES ---------------- */
+function renderTrimestres(){
+  const cuerpo = document.getElementById("cuerpo-trims");
+  cuerpo.innerHTML = TRIMESTRES_LPGS.map(t => {
+    const n = state.trimestres[t.trim].grupos.length;
+    return `
+      <tr>
+        <td><span class="badge">${t.label}</span></td>
+        <td class="izq">${t.nombreUEA}</td>
+        <td>${t.creditos}</td>
+        <td class="mono">${t.claveUEA}</td>
+        <td>
+          <div class="stepper">
+            <button onclick="cambiarNumGrupos(${t.trim}, -1)">−</button>
+            <span class="num" id="num-grupos-${t.trim}">${n}</span>
+            <button onclick="cambiarNumGrupos(${t.trim}, 1)">+</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join("");
+}
+
+function cambiarNumGrupos(trim, delta){
+  const grupos = state.trimestres[trim].grupos;
+  if (delta > 0){
+    const catalogo = COMPONENTES_POR_TRIMESTRE[trim] || [];
+    const componentes = catalogo.length
+      ? catalogo.map(nombreComp => nuevoComponente(nombreComp))
+      : [nuevoComponente()];
+    grupos.push({ claveGrupo:"", cupo:"", observaciones:"", componentes });
+  } else if (delta < 0 && grupos.length > 0){
+    grupos.pop();
+  }
+  regenerarClavesGrupo(trim);
+  document.getElementById(`num-grupos-${trim}`).textContent = grupos.length;
+  renderGrupos();
+}
+
+/* ---------------- RENDER: GRUPOS Y COMPONENTES ---------------- */
+function renderGrupos(){
+  const cont = document.getElementById("contenedor-grupos");
+  let html = "";
+
+  TRIMESTRES_LPGS.forEach(t => {
+    const grupos = state.trimestres[t.trim].grupos;
+    grupos.forEach((g, gIdx) => {
+      html += `<div class="grupo-card">
+        <div class="grupo-head">
+          <div class="titulo">${g.claveGrupo} <span class="meta">· ${t.label} · ${t.nombreUEA} · ${t.creditos} créd · Cve. UEA ${t.claveUEA}</span></div>
+          <div class="cupo-inline">
+            <label style="margin:0;">Cupo</label>
+            <input type="number" min="0" value="${g.cupo}" onchange="actualizarCupo(${t.trim},${gIdx},this.value)">
+          </div>
+        </div>
+        <div class="field solo-division" style="margin-bottom:10px;">
+          <label>Observaciones (para Gestión — ej. "asignar salón equipado")</label>
+          <input type="text" value="${g.observaciones||''}" placeholder="Sin observaciones" onchange="actualizarObservaciones(${t.trim},${gIdx},this.value)">
+        </div>
+        ${g.componentes.map((c, cIdx) => renderComponente(t.trim, gIdx, c, cIdx, g.componentes.length)).join("")}
+        <button class="btn-fantasma" onclick="agregarComponente(${t.trim},${gIdx})">+ Agregar componente del módulo</button>
+      </div>`;
+    });
+  });
+
+  cont.innerHTML = html || `<div class="panel" style="text-align:center; color:var(--gris);">Define cuántos grupos hay por trimestre arriba para empezar a capturar.</div>`;
+}
+
+function renderComponente(trim, gIdx, c, cIdx, totalComp){
+  const resultadoClase = c.estadoBusqueda === "ok" ? "ok" : (c.estadoBusqueda === "error" ? "error" : "");
+  const resultadoTexto = c.estadoBusqueda === "buscando" ? "Buscando…" :
+                         c.estadoBusqueda === "ok" ? "✓ " + c.nombreDocente :
+                         c.estadoBusqueda === "error" ? "No encontrado — escribe el nombre manualmente" : "";
+
+  const catalogo = COMPONENTES_POR_TRIMESTRE[trim] || [];
+  const esDelCatalogo = catalogo.includes(c.compModulo);
+  const esOtro = c.compModulo !== "" && !esDelCatalogo;
+
+  const opcionesComp = catalogo.map(op =>
+    `<option value="${op}" ${c.compModulo===op?"selected":""}>${op}</option>`
+  ).join("");
+
+  return `
+    <div class="componente" data-trim="${trim}" data-gidx="${gIdx}" data-cidx="${cIdx}">
+      <div class="fila-top">
+        <div>
+          <label>Núm. Económico</label>
+          <input type="text" list="lista-profesores" value="${c.numEcon}" oninput="onNumEconInput(${trim},${gIdx},${cIdx},this.value)">
+          <div class="docente-resultado ${resultadoClase}">${resultadoTexto}</div>
+        </div>
+        <div>
+          <label>Nombre del docente</label>
+          <input type="text" list="lista-profesores-nombre" value="${c.nombreDocente}" oninput="onNombreDocenteInput(${trim},${gIdx},${cIdx},this.value)">
+        </div>
+        <div>
+          <label>Comp. del Módulo</label>
+          ${catalogo.length ? `
+            <select onchange="actualizarCompModuloSelect(${trim},${gIdx},${cIdx},this.value)">
+              <option value="" ${c.compModulo===""?"selected":""}>— Selecciona —</option>
+              ${opcionesComp}
+              <option value="${OTRO}" ${esOtro?"selected":""}>Otro (especificar)…</option>
+            </select>
+            ${esOtro ? `<input class="comp-otro" type="text" value="${c.compModulo}" placeholder="Especifica el componente"
+                oninput="actualizarComponente(${trim},${gIdx},${cIdx},'compModulo',this.value)">` : ""}
+          ` : `
+            <input type="text" value="${c.compModulo}" placeholder="Ej. Teoría, Taller, Seminario…"
+              oninput="actualizarComponente(${trim},${gIdx},${cIdx},'compModulo',this.value)">
+          `}
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="check-coord">
+            <input type="checkbox" ${c.esCoordinador ? "checked":""} onchange="marcarCoordinador(${trim},${gIdx},${cIdx},this.checked)">
+            Coordinador(a) de Módulo (***)
+          </div>
+        </div>
+        ${totalComp > 1 ? `<button class="btn-quitar" title="Quitar componente" onclick="quitarComponente(${trim},${gIdx},${cIdx})">✕</button>` : `<span></span>`}
+      </div>
+      <table class="dias-tabla">
+        <thead><tr><th style="width:80px;">Día</th><th style="width:170px;">Horario</th><th>Aula</th></tr></thead>
+        <tbody>
+          ${DIAS.map(d => renderFilaDia(trim,gIdx,cIdx,d,c.horario[d.key])).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function actualizarCompModuloSelect(trim,gIdx,cIdx,valor){
+  const c = state.trimestres[trim].grupos[gIdx].componentes[cIdx];
+  c.compModulo = (valor === OTRO) ? " " : valor; // " " fuerza el modo "otro" hasta que escriba algo
+  renderGrupos();
+}
+
+function renderFilaDia(trim,gIdx,cIdx,d,h){
+  const personalizado = h.tipo === "personalizado";
+  return `
+    <tr>
+      <td>${d.nombre}</td>
+      <td>
+        <select onchange="actualizarHorarioTipo(${trim},${gIdx},${cIdx},'${d.key}',this.value)">
+          <option value="sin_clase" ${h.tipo==="sin_clase"?"selected":""}>Sin clase</option>
+          <option value="8-11" ${h.tipo==="8-11"?"selected":""}>8:00 – 11:00</option>
+          <option value="11-2" ${h.tipo==="11-2"?"selected":""}>11:00 – 14:00</option>
+          <option value="personalizado" ${personalizado?"selected":""}>Personalizado</option>
+        </select>
+        ${personalizado ? `
+          <div class="hora-personalizada" style="margin-top:4px;">
+            <input type="time" value="${h.inicio}" onchange="actualizarHorarioCampo(${trim},${gIdx},${cIdx},'${d.key}','inicio',this.value)">
+            <input type="time" value="${h.fin}" onchange="actualizarHorarioCampo(${trim},${gIdx},${cIdx},'${d.key}','fin',this.value)">
+          </div>` : ""}
+      </td>
+      <td>
+        <div class="fila-aula">
+          <input type="text" placeholder="Se asigna después" value="${h.aula}"
+            ${h.tipo==="sin_clase" ? "disabled" : ""}
+            onchange="actualizarHorarioCampo(${trim},${gIdx},${cIdx},'${d.key}','aula',this.value)">
+          <label class="chk" title="Resaltar en amarillo en la vista final">
+            <input type="checkbox" ${h.resaltado?"checked":""} ${h.tipo==="sin_clase" ? "disabled" : ""}
+              onchange="actualizarHorarioResaltado(${trim},${gIdx},${cIdx},'${d.key}',this.checked)"> resaltar
+          </label>
+        </div>
+      </td>
+    </tr>`;
+}
+
+/* ---------------- ACCIONES SOBRE EL ESTADO ---------------- */
+function actualizarCupo(trim,gIdx,valor){
+  state.trimestres[trim].grupos[gIdx].cupo = valor;
+}
+function actualizarObservaciones(trim,gIdx,valor){
+  state.trimestres[trim].grupos[gIdx].observaciones = valor;
+}
+function agregarComponente(trim,gIdx){
+  state.trimestres[trim].grupos[gIdx].componentes.push(nuevoComponente());
+  renderGrupos();
+}
+function quitarComponente(trim,gIdx,cIdx){
+  state.trimestres[trim].grupos[gIdx].componentes.splice(cIdx,1);
+  renderGrupos();
+}
+function actualizarComponente(trim,gIdx,cIdx,campo,valor){
+  state.trimestres[trim].grupos[gIdx].componentes[cIdx][campo] = valor;
+}
+function marcarCoordinador(trim,gIdx,cIdx,valor){
+  const comps = state.trimestres[trim].grupos[gIdx].componentes;
+  comps.forEach((c,i) => c.esCoordinador = (i === cIdx) ? valor : false);
+  renderGrupos();
+}
+function actualizarHorarioTipo(trim,gIdx,cIdx,dia,tipo){
+  const h = state.trimestres[trim].grupos[gIdx].componentes[cIdx].horario[dia];
+  h.tipo = tipo;
+  if (tipo === "8-11"){ h.inicio="08:00"; h.fin="11:00"; }
+  else if (tipo === "11-2"){ h.inicio="11:00"; h.fin="14:00"; }
+  else if (tipo === "sin_clase"){ h.inicio=""; h.fin=""; h.aula=""; h.resaltado=false; }
+  renderGrupos();
+}
+function actualizarHorarioCampo(trim,gIdx,cIdx,dia,campo,valor){
+  state.trimestres[trim].grupos[gIdx].componentes[cIdx].horario[dia][campo] = valor;
+}
+function actualizarHorarioResaltado(trim,gIdx,cIdx,dia,valor){
+  state.trimestres[trim].grupos[gIdx].componentes[cIdx].horario[dia].resaltado = valor;
+}
+
+/* ---------------- CATÁLOGO DE PROFESORES (autocompletar) ---------------- */
+async function cargarCatalogoProfesores(){
+  try {
+    const resp = await fetch(`${API_URL}?action=listarProfesores`);
+    const data = await resp.json();
+    if (data.ok){
+      catalogoProfesores = data.profesores;
+      document.getElementById("lista-profesores").innerHTML =
+        catalogoProfesores.map(p => `<option value="${p.num}">${p.nombre}</option>`).join("");
+      document.getElementById("lista-profesores-nombre").innerHTML =
+        catalogoProfesores.map(p => `<option value="${p.nombre}">Núm. económico: ${p.num}</option>`).join("");
+    }
+  } catch(err){ console.error(err); }
+}
+
+let temporizadores = {};
+function onNumEconInput(trim,gIdx,cIdx,valor){
+  const comp = state.trimestres[trim].grupos[gIdx].componentes[cIdx];
+  comp.numEcon = valor;
+  const key = `${trim}-${gIdx}-${cIdx}`;
+  clearTimeout(temporizadores[key]);
+
+  if (!valor){
+    comp.estadoBusqueda = "";
+    return;
+  }
+
+  // 1) Búsqueda instantánea en el catálogo ya precargado en el navegador
+  const local = catalogoProfesores.find(p => String(p.num).trim() === String(valor).trim());
+  if (local){
+    comp.nombreDocente = local.nombre;
+    comp.estadoBusqueda = "ok";
+    renderGrupos();
+    return;
+  }
+
+  // 2) Si no está en caché, consulta al Apps Script (con pequeño retardo)
+  temporizadores[key] = setTimeout(() => buscarDocente(trim,gIdx,cIdx,valor), 500);
+}
+
+// Búsqueda inversa: escribes el nombre/apellido y, si coincide exactamente con
+// alguien del catálogo (al elegirlo del datalist), se autocompleta su número económico.
+function onNombreDocenteInput(trim,gIdx,cIdx,valor){
+  const comp = state.trimestres[trim].grupos[gIdx].componentes[cIdx];
+  comp.nombreDocente = valor;
+
+  const coincidencia = catalogoProfesores.find(p => p.nombre.trim().toLowerCase() === valor.trim().toLowerCase());
+  if (coincidencia){
+    comp.numEcon = coincidencia.num;
+    comp.estadoBusqueda = "ok";
+    renderGrupos();
+  }
+}
+
+async function buscarDocente(trim,gIdx,cIdx,numEcon){
+  const comp = state.trimestres[trim].grupos[gIdx].componentes[cIdx];
+  comp.estadoBusqueda = "buscando";
+  renderGrupos();
+  try {
+    const resp = await fetch(`${API_URL}?action=profesor&num=${encodeURIComponent(numEcon)}`);
+    const data = await resp.json();
+    if (data.ok){
+      comp.nombreDocente = data.nombre;
+      comp.estadoBusqueda = "ok";
+    } else {
+      comp.estadoBusqueda = "error";
+    }
+  } catch(err){
+    comp.estadoBusqueda = "error";
+  }
+  renderGrupos();
+}
+
+/* ---------------- DISEÑO LICENCIATURA / DIVISIÓN + ENCABEZADO ---------------- */
+function onCambiarPeriodo(valor){
+  state.periodo = valor;
+  actualizarLetterhead();
+}
+
+function plantillaLetterhead(diseno, periodo){
+  if (diseno === "licenciatura"){
+    return `
+      <div class="lh-grid">
+        <div class="lh-logo-slot">LOGO<br>UAM</div>
+        <div class="lh-inst">
+          UNIVERSIDAD AUTÓNOMA METROPOLITANA<br>UNIDAD XOCHIMILCO<br>
+          DIVISIÓN DE CIENCIAS SOCIALES Y HUMANIDADES<br>LICENCIATURA EN POLÍTICA Y GESTIÓN SOCIAL
+        </div>
+        <div class="lh-titulo-bloque">
+          <h1>PROGRAMACIÓN ACADÉMICA</h1>
+          <div class="lh-sub">TRIMESTRE ${periodo || "—"}</div>
+        </div>
+        <div class="lh-contacto">
+          coordinacionpgs@correo.xoc.uam.mx<br>facebook.com/politicauamx<br>instagram: politicaygestionsocial
+        </div>
+        <div class="lh-logo-slot">LOGO<br>PyGS</div>
+      </div>`;
+  }
+  const hoy = new Date().toLocaleDateString('es-MX');
+  return `
+    <div class="lh-division-top">
+      <div class="lh-logo-slot">LOGO<br>DCSH</div>
+      <h1 class="lh-division-titulo">PROGRAMACIÓN TRIMESTRAL ${periodo || "—"} LICENCIATURA EN POLÍTICA Y GESTIÓN SOCIAL</h1>
+      <div class="lh-logo-spacer"></div>
+    </div>
+    <div class="lh-division-actualizado-wrap">
+      <div class="lh-actualizado">ACTUALIZADO AL: ${hoy}</div>
+    </div>`;
+}
+
+function actualizarLetterhead(){
+  const html = plantillaLetterhead(state.diseno, state.periodo);
+  document.getElementById("letterhead").innerHTML = html;
+}
+
+function cambiarDiseno(d){
+  state.diseno = d;
+  document.body.className = "diseno-" + d;
+  document.getElementById("btn-diseno-lic").classList.toggle("activo", d==="licenciatura");
+  document.getElementById("btn-diseno-div").classList.toggle("activo", d==="division");
+  actualizarLetterhead();
+  renderGrupos();
+}
+
+/* ---------------- VISTA PREVIA / TABLA FINAL ---------------- */
+function actualizarVistaPrevia(){
+  document.getElementById("vista-previa").style.display = "block";
+  document.getElementById("letterhead-pv").innerHTML = plantillaLetterhead(state.diseno, state.periodo);
+  document.getElementById("pv-firma-coord").textContent = state.coordLic || "—";
+  document.getElementById("pv-firma-jefe").textContent = state.jefeDepto || "—";
+
+  let bloques = "";
+  TRIMESTRES_LPGS.forEach(t => {
+    const gruposTrim = state.trimestres[t.trim].grupos;
+    gruposTrim.forEach(g => {
+      let filasGrupo = "";
+      let primeraFilaGrupo = true;
+      g.componentes.forEach(c => {
+        let fila = "<tr>";
+        if (primeraFilaGrupo){
+          fila += `<td rowspan="${g.componentes.length}">${t.label}</td>
+                    <td rowspan="${g.componentes.length}">${t.creditos}</td>
+                    <td rowspan="${g.componentes.length}">${t.claveUEA}</td>
+                    <td rowspan="${g.componentes.length}" class="izq">${t.nombreUEA}</td>
+                    <td rowspan="${g.componentes.length}" class="mono">${g.claveGrupo}</td>`;
+        }
+        const nombreMostrado = (c.esCoordinador ? "***" : "") + (c.nombreDocente || "—");
+        fila += `<td>${c.numEcon || "—"}</td>
+                  <td class="izq ${c.esCoordinador ? 'coord-marca':''}">${nombreMostrado}</td>
+                  <td class="izq">${c.compModulo || "—"}</td>`;
+        if (primeraFilaGrupo){
+          fila += `<td rowspan="${g.componentes.length}">${g.cupo || "—"}</td>`;
+        }
+        fila += DIAS.map(d => celdasDia(c.horario[d.key])).join("");
+        if (primeraFilaGrupo){
+          fila += `<td class="solo-division" rowspan="${g.componentes.length}">${g.observaciones || ""}</td>`;
+        }
+        fila += "</tr>";
+        filasGrupo += fila;
+        primeraFilaGrupo = false;
+      });
+      // Cada grupo vive en su propio <tbody>: así, al imprimir, el navegador
+      // puede mandarlo completo a la siguiente página sin partirlo.
+      bloques += `<tbody class="bloque-grupo">${filasGrupo}</tbody>`;
+    });
+  });
+
+  const tabla = document.getElementById("pv-tabla");
+  tabla.querySelectorAll("tbody").forEach(tb => tb.remove());
+  tabla.insertAdjacentHTML("beforeend", bloques || `<tbody><tr><td colspan="25">Aún no hay grupos capturados.</td></tr></tbody>`);
+}
+
+function celdasDia(h){
+  if (h.tipo === "sin_clase") return `<td></td><td></td><td></td>`;
+  const claseResaltado = h.resaltado ? "resaltado" : "";
+  return `<td>${h.inicio}</td><td>${h.fin}</td><td class="aula-valor ${claseResaltado}">${h.aula || ""}</td>`;
+}
+
+function generarPDF(){
+  actualizarVistaPrevia();
+  setTimeout(() => window.print(), 150);
+}
+
+function _aplicarBorde(cell, color){
+  const b = { style: "thin", color: { argb: color || "FFD9DCE1" } };
+  cell.border = { top:b, left:b, bottom:b, right:b };
+}
+function _celda(ws, r1, c1, r2, c2, valor, opts={}){
+  if (r2 > r1 || c2 > c1) ws.mergeCells(r1, c1, r2, c2);
+  const cell = ws.getCell(r1, c1);
+  cell.value = valor;
+  cell.alignment = { horizontal: opts.align || "center", vertical: "middle", wrapText: !!opts.wrap };
+  cell.font = { name: "Calibri", size: opts.size || 10, bold: !!opts.bold, color: { argb: opts.color || "FF000000" } };
+  if (opts.fill) cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: opts.fill } };
+  return cell;
+}
+function _estilizarRango(ws, r1, c1, r2, c2, colorBorde){
+  for (let r = r1; r <= r2; r++){
+    for (let c = c1; c <= c2; c++){
+      _aplicarBorde(ws.getCell(r, c), colorBorde);
+    }
+  }
+}
+
+async function generarExcel(){
+  actualizarVistaPrevia();
+  if (typeof ExcelJS === "undefined"){
+    alert("No se pudo cargar la librería de Excel. Verifica tu conexión a internet e inténtalo de nuevo.");
+    return;
+  }
+  state.coordLic = document.getElementById("in-coord-lic").value;
+  state.jefeDepto = document.getElementById("in-jefe-depto").value;
+
+  const esDivision = state.diseno === "division";
+  const totalCols = esDivision ? 25 : 24;
+  const colBanda = esDivision ? "FFFFFFFF" : "FF2F5597";
+  const colTextoBanda = esDivision ? "FF000000" : "FFFFFFFF";
+  const colTitulo = esDivision ? "FF000000" : "FF002060";
+  const colBordeTabla = esDivision ? "FF000000" : "FF2F5597";
+  const colBordeCuerpo = "FFD9DCE1";
+  const colAmarillo = "FFFFFF00";
+
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet("Programación");
+  let fila = 1;
+
+  // ---- ENCABEZADO INSTITUCIONAL (letterhead) ----
+  if (!esDivision){
+    _celda(ws, fila, 1, fila+4, 2, "LOGO\nUAM", { size:9, color:"FF999999", wrap:true });
+    _celda(ws, fila, totalCols-1, fila+4, totalCols, "LOGO\nPyGS", { size:9, color:"FF999999", wrap:true });
+    _celda(ws, fila, 3, fila, totalCols-2, "UNIVERSIDAD AUTÓNOMA METROPOLITANA · UNIDAD XOCHIMILCO", { size:10, bold:true }); ws.getRow(fila).height = 14; fila++;
+    _celda(ws, fila, 3, fila, totalCols-2, "DIVISIÓN DE CIENCIAS SOCIALES Y HUMANIDADES · LICENCIATURA EN POLÍTICA Y GESTIÓN SOCIAL", { size:10, bold:true }); ws.getRow(fila).height = 14; fila++;
+    _celda(ws, fila, 3, fila, totalCols-2, "PROGRAMACIÓN ACADÉMICA", { size:16, bold:true, color:colTitulo }); ws.getRow(fila).height = 21; fila++;
+    _celda(ws, fila, 3, fila, totalCols-2, `TRIMESTRE ${state.periodo || "—"}`, { size:13, bold:true, color:colTitulo }); ws.getRow(fila).height = 17; fila++;
+    _celda(ws, fila, 3, fila, totalCols-2, "coordinacionpgs@correo.xoc.uam.mx · facebook.com/politicauamx · instagram: politicaygestionsocial", { size:9, color:colTitulo }); ws.getRow(fila).height = 13; fila++;
+  } else {
+    const hoy = new Date().toLocaleDateString("es-MX");
+    _celda(ws, fila, 1, fila+1, 2, "LOGO\nDCSH", { size:9, color:"FF999999", wrap:true });
+    _celda(ws, fila, 3, fila, totalCols, `PROGRAMACIÓN TRIMESTRAL ${state.periodo || "—"} LICENCIATURA EN POLÍTICA Y GESTIÓN SOCIAL`, { size:13, bold:true }); ws.getRow(fila).height = 17; fila++;
+    _celda(ws, fila, 3, fila, totalCols, `ACTUALIZADO AL: ${hoy}`, { size:10, bold:true, fill:colAmarillo }); ws.getRow(fila).height = 14; fila++;
+  }
+  fila++; // separación
+
+  // ---- ENCABEZADO DE TABLA (HORARIO → día → inicio/fin/aula) ----
+  const filaHorario = fila, filaDias = fila+1, filaSub = fila+2;
+  [filaHorario, filaDias, filaSub].forEach(r => { ws.getRow(r).height = 16; });
+  const columnasEstaticas = ["Trim Acad","Cred","Cve. U.E.A","Nombre de la U.E.A","Clave de Grupo","Núm. Eco.","Nombre del docente","Comp. Del Módulo","Cupo"];
+  columnasEstaticas.forEach((titulo, idx) => {
+    const col = idx + 1;
+    _celda(ws, filaHorario, col, filaSub, col, titulo, { size:9, bold:true, color:colTextoBanda, fill:colBanda });
+  });
+  const colHorarioIni = columnasEstaticas.length + 1;
+  _celda(ws, filaHorario, colHorarioIni, filaHorario, colHorarioIni + 14, "HORARIO", { size:10, bold:true, color:colTextoBanda, fill:colBanda });
+  DIAS.forEach((d, i) => {
+    const c1 = colHorarioIni + i*3;
+    _celda(ws, filaDias, c1, filaDias, c1+2, d.nombre, { size:9, bold:true, color:colTextoBanda, fill:colBanda });
+    ["inicio","fin","aula"].forEach((etq, j) => {
+      _celda(ws, filaSub, c1+j, filaSub, c1+j, etq, { size:8.5, color:colTextoBanda, fill:colBanda });
+    });
+  });
+  if (esDivision){
+    const colObs = colHorarioIni + 15;
+    _celda(ws, filaHorario, colObs, filaSub, colObs, "Observaciones", { size:9, bold:true, color:colTextoBanda, fill:colBanda });
+  }
+  _estilizarRango(ws, filaHorario, 1, filaSub, totalCols, colBordeTabla);
+  fila = filaSub + 1;
+
+  // ---- CONFIGURACIÓN DE PÁGINA (impresión en horizontal, encabezado repetido cada hoja) ----
+  ws.pageSetup = {
+    paperSize: 1, // Carta (Letter)
+    orientation: "landscape",
+    fitToPage: false,
+    margins: { left:0.3, right:0.3, top:0.3, bottom:0.3, header:0, footer:0 }
+  };
+  ws.pageSetup.printTitlesRow = `${filaHorario}:${filaSub}`;
+
+  // Estimado conservador de cuántas filas de datos caben por hoja (A4 horizontal,
+  // filas de 15pt, sin escalado). Si tu impresora/zoom da un resultado distinto,
+  // puedes ajustar los saltos de página manualmente en Excel sin perder el diseño.
+  const FILAS_PRIMERA_PAGINA = 24;
+  const FILAS_SIGUIENTE_PAGINA = 29;
+  let filasEnPaginaActual = 0;
+  let esPrimeraPagina = true;
+
+  // ---- FILAS DE DATOS ----
+  TRIMESTRES_LPGS.forEach(t => {
+    state.trimestres[t.trim].grupos.forEach(g => {
+      const nFilasGrupo = g.componentes.length;
+      const presupuesto = esPrimeraPagina ? FILAS_PRIMERA_PAGINA : FILAS_SIGUIENTE_PAGINA;
+      if (filasEnPaginaActual > 0 && (filasEnPaginaActual + nFilasGrupo) > presupuesto){
+        ws.getRow(fila - 1).addPageBreak();
+        filasEnPaginaActual = 0;
+        esPrimeraPagina = false;
+      }
+
+      const filaInicioGrupo = fila;
+      g.componentes.forEach(c => {
+        const r = fila;
+        ws.getRow(r).height = 15;
+        const nombreMostrado = (c.esCoordinador ? "***" : "") + (c.nombreDocente || "—");
+        const cNum = ws.getCell(r, 6); cNum.value = c.numEcon || "—"; cNum.alignment = { horizontal:"center", vertical:"middle" };
+        const cNom = ws.getCell(r, 7); cNom.value = nombreMostrado; cNom.alignment = { horizontal:"left", vertical:"middle" };
+        if (c.esCoordinador) cNom.font = { bold:true, size:10 };
+        const cComp = ws.getCell(r, 8); cComp.value = c.compModulo || "—"; cComp.alignment = { horizontal:"left", vertical:"middle" };
+        DIAS.forEach((d, i) => {
+          const h = c.horario[d.key];
+          const base = colHorarioIni + i*3;
+          const sinClase = h.tipo === "sin_clase";
+          ws.getCell(r, base).value = sinClase ? "" : h.inicio;
+          ws.getCell(r, base+1).value = sinClase ? "" : h.fin;
+          const cAula = ws.getCell(r, base+2);
+          cAula.value = sinClase ? "" : (h.aula || "");
+          cAula.font = { bold:true, size:10 };
+          if (h.resaltado) cAula.fill = { type:"pattern", pattern:"solid", fgColor:{argb:colAmarillo} };
+        });
+        fila++;
+      });
+      const filaFinGrupo = filaInicioGrupo + nFilasGrupo - 1;
+      if (nFilasGrupo > 1){
+        [1,2,3,4,5,9].forEach(col => ws.mergeCells(filaInicioGrupo, col, filaFinGrupo, col));
+        if (esDivision) ws.mergeCells(filaInicioGrupo, 25, filaFinGrupo, 25);
+      }
+      ws.getCell(filaInicioGrupo, 1).value = t.label;
+      ws.getCell(filaInicioGrupo, 2).value = t.creditos;
+      ws.getCell(filaInicioGrupo, 3).value = t.claveUEA;
+      ws.getCell(filaInicioGrupo, 4).value = t.nombreUEA;
+      ws.getCell(filaInicioGrupo, 4).alignment = { horizontal:"left", vertical:"middle", wrapText:true };
+      ws.getCell(filaInicioGrupo, 5).value = g.claveGrupo;
+      ws.getCell(filaInicioGrupo, 9).value = g.cupo || "—";
+      if (esDivision){
+        ws.getCell(filaInicioGrupo, 25).value = g.observaciones || "";
+        ws.getCell(filaInicioGrupo, 25).alignment = { horizontal:"left", vertical:"middle", wrapText:true };
+      }
+      filasEnPaginaActual += nFilasGrupo;
+    });
+  });
+
+  const filaFinDatos = fila - 1;
+  if (filaFinDatos >= filaSub + 1){
+    _estilizarRango(ws, filaSub+1, 1, filaFinDatos, totalCols, colBordeCuerpo);
+    for (let r = filaSub+1; r <= filaFinDatos; r++){
+      for (let c = 1; c <= totalCols; c++){
+        if (!ws.getCell(r,c).alignment) ws.getCell(r,c).alignment = { horizontal:"center", vertical:"middle" };
+      }
+    }
+    fila = filaFinDatos + 1;
+  } else {
+    _celda(ws, fila, 1, fila, totalCols, "Aún no hay grupos capturados.", { align:"left" });
+    fila++;
+  }
+
+  // ---- NOTA Y FIRMAS ----
+  fila++;
+  _celda(ws, fila, 1, fila, 6, "*** Coordinador(a) de Módulo", { size:9, align:"left" });
+  fila += 2;
+
+  const mitad = Math.floor(totalCols/2);
+  const izqIni=2, izqFin=mitad-1, derIni=mitad+2, derFin=totalCols-1;
+  for (let c=izqIni;c<=izqFin;c++) ws.getCell(fila,c).border = { bottom: {style:"thin", color:{argb:"FF000000"}} };
+  for (let c=derIni;c<=derFin;c++) ws.getCell(fila,c).border = { bottom: {style:"thin", color:{argb:"FF000000"}} };
+  fila++;
+  _celda(ws, fila, izqIni, fila, izqFin, state.coordLic || "—", { size:10 });
+  _celda(ws, fila, derIni, fila, derFin, state.jefeDepto || "—", { size:10 });
+  fila++;
+  _celda(ws, fila, izqIni, fila, izqFin, "Coordinador(a) de la Licenciatura en Política y Gestión Social", { size:8.5, color:"FF666C76" });
+  _celda(ws, fila, derIni, fila, derFin, "Jefe(a) del Departamento de Política y Cultura", { size:8.5, color:"FF666C76" });
+
+  // ---- ANCHOS DE COLUMNA ----
+  const anchos = [8,7,10,24,10,9,26,20,7];
+  anchos.forEach((w,i) => { ws.getColumn(i+1).width = w; });
+  for (let i=0;i<5;i++){
+    ws.getColumn(colHorarioIni + i*3).width = 7;
+    ws.getColumn(colHorarioIni + i*3 + 1).width = 7;
+    ws.getColumn(colHorarioIni + i*3 + 2).width = 10;
+  }
+  if (esDivision) ws.getColumn(25).width = 26;
+
+  // ---- DESCARGA ----
+  const buffer = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: "application/octet-stream" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const periodoLimpio = (state.periodo || "sin-periodo").replace(/[^a-zA-Z0-9-]+/g, "_");
+  a.download = `ProgramacionGlobal_${periodoLimpio}_${state.diseno}.xlsx`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ---------------- GUARDAR / CARGAR (Apps Script) ---------------- */
+function recolectarPayload(){
+  return JSON.stringify(state);
+}
+
+function idDesdePeriodo(){
+  const p = (state.periodo || "sin-periodo").toLowerCase().replace(/[^a-z0-9]+/g,"-");
+  return idActual || `lpgs-global-${p}`;
+}
+
+async function guardar(){
+  state.periodo = document.getElementById("in-periodo").value;
+  state.coordLic = document.getElementById("in-coord-lic").value;
+  state.jefeDepto = document.getElementById("in-jefe-depto").value;
+
+  const token = prompt("Token de guardado (SECRET_TOKEN):");
+  if (!token) return;
+
+  idActual = idDesdePeriodo();
+  const estadoEl = document.getElementById("estado-guardado");
+  estadoEl.textContent = "Guardando…";
+
+  const params = new URLSearchParams({
+    action: "guardar",
+    token: token,
+    id: idActual,
+    periodo: state.periodo,
+    tipo: "Global",
+    diseno: state.diseno,
+    payload: recolectarPayload()
+  });
+
+  try {
+    const resp = await fetch(`${API_URL}?${params.toString()}`);
+    const data = await resp.json();
+    estadoEl.textContent = data.ok ? `Guardado ✓ (${idActual})` : `Error: ${data.error}`;
+  } catch(err){
+    estadoEl.textContent = "Error de conexión al guardar.";
+  }
+}
+
+async function refrescarListado(){
+  const sel = document.getElementById("sel-cargar");
+  sel.innerHTML = `<option value="">— Cargar programación guardada —</option>`;
+  try {
+    const resp = await fetch(`${API_URL}?action=listar`);
+    const data = await resp.json();
+    if (data.ok){
+      data.programaciones.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = `${p.periodo} · ${p.diseno} (${p.id})`;
+        sel.appendChild(opt);
+      });
+    }
+  } catch(err){
+    console.error(err);
+  }
+}
+
+async function cargarSeleccionada(){
+  const id = document.getElementById("sel-cargar").value;
+  if (!id) return;
+  document.getElementById("estado-guardado").textContent = "Cargando…";
+  try {
+    const resp = await fetch(`${API_URL}?action=obtener&id=${encodeURIComponent(id)}`);
+    const data = await resp.json();
+    if (data.ok){
+      state = JSON.parse(data.payload);
+      idActual = data.id;
+      document.getElementById("in-periodo").value = state.periodo || "";
+      document.getElementById("in-coord-lic").value = state.coordLic || "";
+      document.getElementById("in-jefe-depto").value = state.jefeDepto || "";
+      cambiarDiseno(state.diseno || "licenciatura");
+      renderTrimestres();
+      renderGrupos();
+      document.getElementById("estado-guardado").textContent = `Cargado ✓ (${idActual})`;
+    } else {
+      document.getElementById("estado-guardado").textContent = `Error: ${data.error}`;
+    }
+  } catch(err){
+    document.getElementById("estado-guardado").textContent = "Error de conexión al cargar.";
+  }
+}
+
+/* ---------------- INICIO ---------------- */
+actualizarLetterhead();
+renderTrimestres();
+renderGrupos();
+if (API_URL && !API_URL.startsWith("PEGA_AQUI")){
+  refrescarListado();
+  cargarCatalogoProfesores();
+}
+</script>
+</body>
+</html>
